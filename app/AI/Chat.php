@@ -2,7 +2,7 @@
 
 namespace App\AI;
 
-use Illuminate\Support\Facades\Http;
+use OpenAI\Laravel\Facades\OpenAI;
 
 class Chat
 {
@@ -24,14 +24,12 @@ class Chat
             "role" => "user",
             "content" => $message,
         ];
-        $response = Http::withToken(config('services.openai.key'))
-            ->post('https://api.openai.com/v1/chat/completions',
-                [
+        $response = OpenAi::chat()
+            ->create([
                     "model" => "gpt-3.5-turbo",
                     "messages" => $this->messages,
                 ]
-            )
-            ->json('choices.0.message.content');
+            )->choices[0]->message->content;
 
         if ($response) {
             $this->messages[] = [
